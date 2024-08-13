@@ -1,4 +1,6 @@
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
+import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -9,6 +11,16 @@ export default function Home() {
             reeead is open.
           </p>
         </div>
+        <h1 className="max-w-4xl text-5xl font-bold md:text-6xl lg:text-7xl">
+          Chat with your <span className="bg-gradient-to-r from-blue-600 via-green-500 to-indigo-400 inline-block text-transparent bg-clip-text">documents</span> in seconds.
+        </h1>
+        <p className="mt-5 max-w-prose text-zinc-700 sm:text-xl">
+          Reeead alows you to text with your PDFs.
+        </p>
+
+        <Link href="/dashboard" target="_blank">
+          Get started <ArrowRight className="ml-2 h-5 w-5"/>
+        </Link>
       </MaxWidthWrapper>
   );
 }
