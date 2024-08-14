@@ -11,6 +11,8 @@ export const appRouter = router({
       throw new TRPCError({code: "UNAUTHORIZED"})
     }
 
+   // const dbUser = await 
+
     return {success: true}
   })
 });
