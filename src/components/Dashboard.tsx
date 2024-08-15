@@ -1,16 +1,27 @@
 "use client"
 import { trpc } from "@/app/_trpc/client"
 import { UploadButton } from "./UploadButton"
-import { Ghost, MessageSquare, Plus, TrashIcon } from "lucide-react"
+import { Ghost, Loader2Icon, MessageSquare, Plus, TrashIcon } from "lucide-react"
 import Skeleton from "react-loading-skeleton"
 import Link from "next/link"
 import { format } from "date-fns"
 import { Button } from "./ui/button"
 import { describe } from "node:test"
+import React from "react"
 
 export const Dashboard = () => {
 
+    const [curDelFile, setCurDelFile] = React.useState<string | null>(null)
+
+    const utils = trpc.useUtils()
     const {data: files, isLoading} = trpc.getUserFiles.useQuery()
+    const { mutate: deleteFile } = trpc.deleteFile.useMutation({
+        onSuccess: () => {utils.getUserFiles.invalidate()},
+        onMutate({id}){ setCurDelFile(id)},
+        onSettled(){
+            setCurDelFile(null)
+        }
+    })
 
     return (
         <main className="mx-auto max-w-7xl md:p-10">
@@ -20,7 +31,7 @@ export const Dashboard = () => {
             </div>
 
             {files && files?.length !== 0 ?
-            (<ul className="mt-8 grid-cols-1 gap-6 divide-y divide-zinc-200 md:grid-cols-2 lg:grid-cols-3">
+            (<ul className="mt-8 grid grid-cols-1 gap-6 divide-y divide-zinc-200 md:grid-cols-2 lg:grid-cols-3">
                 {files.sort((a, b) => 
                     new Date(b.createdAt).getTime() - 
                     new Date(a.createdAt).getTime())
@@ -46,8 +57,11 @@ export const Dashboard = () => {
                                 <MessageSquare className="h-4 w-4"/>
                                 Mocked
                             </div>
-                            <Button size="sm" className="w-full" variant="destructive">
-                                <TrashIcon/>
+                            <Button onClick={() => {deleteFile({id: file.id})}} size="sm" className="w-full" variant="destructive">
+                               {curDelFile === file.id ? (
+                                <Loader2Icon className="w-4 h-4 animate-spin"/>
+                               ) : (    
+                               <TrashIcon/>)}
                             </Button>
                             </div>
                         </li>
