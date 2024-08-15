@@ -31,16 +31,16 @@ const UploadZone = () => {
         setUploadProgress(0)
 
         const interval = setInterval(() => {
-            setUploadProgress((prev) => {
-                if(prev >= 95) {
-                    return prev
-                } else {
-                    return prev + 5
-                }
+            setUploadProgress((prevProgress) => {
+              if (prevProgress >= 95) {
+                clearInterval(interval)
+                return prevProgress
+              }
+              return prevProgress + 5
             })
-        }, 500)
-
-        return interval
+          }, 500)
+      
+          return interval
     }
 
     return (
