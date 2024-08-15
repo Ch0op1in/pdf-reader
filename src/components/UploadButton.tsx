@@ -5,15 +5,40 @@ import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog"
 import { Button } from "./ui/button"
 import Dropzone from "react-dropzone"
 import { File, FileInput } from "lucide-react"
+import { Progress } from "./ui/progress"
 
 const UploadZone = () => {
 
     const [loading, setLoading] = React.useState<boolean>(true)
+    const [uploadProgress, setUploadProgress] = React.useState<number>(0)
+    
+    
+    const startSimulatedProgress = () => {
+        setUploadProgress(0)
+
+        const interval = setInterval(() => {
+            setUploadProgress((prev) => {
+                if(prev >= 95) {
+                    return prev
+                } else {
+                    return prev + 5
+                }
+            })
+        }, 500)
+
+        return interval
+    }
 
     return (
         
         <Dropzone multiple={false} onDrop={(acceptedFile) => {
-            console.log(acceptedFile)
+            setLoading(true)
+            const simulateProgress = startSimulatedProgress()
+
+            clearInterval(simulateProgress)
+            setUploadProgress(100)
+
+
         }}>
             {({getRootProps, getInputProps, acceptedFiles}) =>(
                 <div {...getRootProps()} className="border h-64 m-4 rounded-md border-dashed border-gray-300"> 
@@ -42,7 +67,7 @@ const UploadZone = () => {
 
                             {loading ? (
                                 <div className="w-full mt-4 max-w-xs mx-auto">
-
+                                    <Progress value={uploadProgress} className="h-1 w-full bg-zinc-200"/>
                                 </div>
                             ) : null}
                         </label>
