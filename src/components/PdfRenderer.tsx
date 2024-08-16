@@ -2,10 +2,13 @@
 import {Document, Page, pdfjs} from "react-pdf"
 import "react-pdf/dist/cjs/Page/AnnotationLayer.css"
 import "react-pdf/dist/cjs/Page/TextLayer.css"
-import * as pdfjsLib from 'pdfjs-dist/webpack';
 
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
 
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+    'pdfjs-dist/build/pdf.worker.min.mjs',
+    import.meta.url,
+  ).toString();
+  
 
 
 interface PdfRendereProps{
@@ -13,6 +16,8 @@ interface PdfRendereProps{
 }
 
 const PdfRenderer = ({url}: PdfRendereProps) => {
+
+    console.log("voici pdf :" + url)
     
     return(
         <div className="w-full bg-white rounded-md shadow flex flex-col items-center">
@@ -24,7 +29,7 @@ const PdfRenderer = ({url}: PdfRendereProps) => {
 
             <div className="flex-1 w-full max-h-screen ">
                 <div>
-                    <Document file={url} className="max-h-full">
+                    <Document file={url} /*file="../public/DocumentStage.pdf"*/ className="max-h-full">
                         <Page pageNumber={1} />
                     </Document>
                 </div>
