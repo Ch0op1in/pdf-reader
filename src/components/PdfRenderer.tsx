@@ -1,15 +1,15 @@
-"use client"
-import {Document, Page, pdfjs} from "react-pdf"
-import "react-pdf/dist/cjs/Page/AnnotationLayer.css"
-import "react-pdf/dist/cjs/Page/TextLayer.css"
-
+'use client'
+import { Loader2 } from 'lucide-react';
+import React from 'react';
+import { pdfjs, Document, Page } from 'react-pdf';
+import 'react-pdf/dist/Page/AnnotationLayer.css';
+import 'react-pdf/dist/Page/TextLayer.css';
+import { useToast } from './ui/use-toast';
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-    'pdfjs-dist/build/pdf.worker.min.mjs',
-    import.meta.url,
-  ).toString();
-  
-
+  'pdfjs-dist/build/pdf.worker.min.mjs',
+  import.meta.url,
+).toString();
 
 interface PdfRendereProps{
     url: string
@@ -17,7 +17,7 @@ interface PdfRendereProps{
 
 const PdfRenderer = ({url}: PdfRendereProps) => {
 
-    console.log("voici pdf :" + url)
+    const { toast } = useToast()
     
     return(
         <div className="w-full bg-white rounded-md shadow flex flex-col items-center">
@@ -28,11 +28,25 @@ const PdfRenderer = ({url}: PdfRendereProps) => {
             </div>
 
             <div className="flex-1 w-full max-h-screen ">
+            <Document 
+            loading={
                 <div>
-                    <Document file={url} /*file="../public/DocumentStage.pdf"*/ className="max-h-full">
-                        <Page pageNumber={1} />
-                    </Document>
+                    <Loader2 className='my-24 h-6 w-6 animate-spin'/>
                 </div>
+            } 
+            onLoadError={() => {
+                toast({
+                    title: "Something went wrong",
+                    description: "Please try again, or reaload the page",
+                    variant: "destructive"
+                })
+            }}
+            file={url}
+            >
+                <Page pageNumber={1} />
+            </Document>
+             {/* <iframe src={url} className='h-full w-full flex-1 flex-col'/> */}
+            
             </div>
         </div>
     )
