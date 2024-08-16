@@ -1,5 +1,5 @@
 'use client'
-import { ChevronDown, ChevronUp, Loader2 } from 'lucide-react';
+import { ChevronDown, ChevronUp, Ghost, Loader2, RotateCw, SearchIcon } from 'lucide-react';
 import React from 'react';
 import { pdfjs, Document, Page } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
@@ -8,6 +8,14 @@ import { useToast } from './ui/use-toast';
 import { useResizeDetector } from "react-resize-detector"
 import { Button } from './ui/button';
 import { Input } from './ui/input';
+import { useForm } from 'react-hook-form'
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { cn } from '@/lib/utils';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
+import SimpleBar from 'simplebar-react'
+import "simplebar-react/dist/simplebar.min.css"
+
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   'pdfjs-dist/build/pdf.worker.min.mjs',
@@ -20,10 +28,32 @@ interface PdfRendereProps{
 
 const PdfRenderer = ({url}: PdfRendereProps) => {
 
-    const { toast } = useToast()
-    const { width, ref } = useResizeDetector()
     const [numPage, setNumPage] = React.useState<number>()
     const [curPage, setCurPage] = React.useState<number>(1)
+    const [scale, setScale] = React.useState<number>(1)
+    const [rotation, setRotation] = React.useState<number>(0)
+
+    const customPageInput = z.object({
+        page: z.string().refine((num) => Number(num) > 0 &&  Number(num) <= numPage!)
+    })
+
+    type TcustomPageInput = z.infer<typeof customPageInput>
+
+    const { register, handleSubmit, formState: {errors}, setValue } = useForm<TcustomPageInput>({
+        defaultValues: {
+            page: "1"
+        },
+        resolver: zodResolver(customPageInput)
+    })
+
+    const { toast } = useToast()
+    const { width, ref } = useResizeDetector()
+
+    const handlePageSubmit = ({page,}: TcustomPageInput) => {
+        setCurPage(Number(page))
+        setValue("page", String(page))
+    }
+
     
     return(
         <div className="w-full bg-white rounded-md shadow flex flex-col items-center">
@@ -33,7 +63,12 @@ const PdfRenderer = ({url}: PdfRendereProps) => {
                         <ChevronDown className='h-4 w-4'/>
                     </Button>
                     <div className='flex items-center gap-1.5'>
-                        <Input className='w-12 h-8' value={curPage}/>
+                        <Input {...register("page")} className={cn('w-12 h-8', errors.page && 'focus-visible:ring-red-500')}
+                        onKeyDown={(e) => {
+                            if(e.key === "Enter"){
+                                handleSubmit(handlePageSubmit)()
+                            }
+                        }}/>
                         <p className='text-zinc-700 text-sm space-x-1 ml-1'>
                             <span> /</span>
                             <span>{numPage ?? "..."}</span>
@@ -43,31 +78,71 @@ const PdfRenderer = ({url}: PdfRendereProps) => {
                         <ChevronUp className='h-4 w-4' onClick={() => setCurPage((prev) => prev + 1 >= numPage! ? numPage! : prev + 1)}/>
                     </Button>
                 </div>
+                <div className='space-x-2'>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button className='gap-1.5' variant='ghost'>
+                                <SearchIcon className='h-4 w-4'/>
+                                {scale * 100}%
+                                <ChevronDown className='h-4 w-4 opacity-50'/>
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            <DropdownMenuItem onSelect={() => {setScale(1)}}>
+                                100%
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onSelect={() => {setScale(1.25)}}>
+                                125%
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onSelect={() => {setScale(1.5)}}>
+                                150%
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onSelect={() => {setScale(1.75)}}>
+                                175%
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onSelect={() => {setScale(2)}}>
+                                200%
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                    <Button variant="ghost" onClick={() => {setRotation((prev) => prev + 90)}}>
+                        <RotateCw className='h-4 w-4'/>
+                    </Button>
+                    <PdfFullScreen/>
+                </div>
             </div>
 
-            <div ref={ref} className="flex-1 w-full max-h-screen">
-            <Document 
-            loading={
-                <div>
-                    <Loader2 className='my-24 h-6 w-6 animate-spin'/>
+        <div className="flex-1 w-full max-h-screen">
+            <SimpleBar autoHide={false} className='max-h-[calc(100vh-10rem)]'>
+            <div ref={ref} >
+                <Document 
+                loading={
+                    <div>
+                        <Loader2 className='my-24 h-6 w-6 animate-spin'/>
+                    </div>
+                } 
+                onLoadSuccess={({numPages}) => {
+                    setNumPage(numPages)
+                }}
+                onLoadError={() => {
+                    toast({
+                        title: "Something went wrong",
+                        description: "Please try again, or reaload the page",
+                        variant: "destructive"
+                    })
+                }}
+                file={url}
+                >
+                    <Page 
+                    width={width ? width : 1} 
+                    pageNumber={curPage} 
+                    scale={scale}
+                    rotate={rotation}/>
+                </Document>
+                {/* <iframe src={url} className='h-full w-full flex-1 flex-col'/> */}
+                
                 </div>
-            } 
-            onLoadSuccess={({numPages}) => {
-                 setNumPage(numPages)
-            }}
-            onLoadError={() => {
-                toast({
-                    title: "Something went wrong",
-                    description: "Please try again, or reaload the page",
-                    variant: "destructive"
-                })
-            }}
-            file={url}
-            >
-                <Page width={width ? width : 1} pageNumber={curPage} />
-            </Document>
-             {/* <iframe src={url} className='h-full w-full flex-1 flex-col'/> */}
-            
+            </SimpleBar>
             </div>
         </div>
     )
