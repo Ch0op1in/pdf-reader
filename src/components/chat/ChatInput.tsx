@@ -1,9 +1,8 @@
 
 const ChatWrapper = () => {
-
-    return (
+    return(
         <div>
-            ChatWrapper
+            
         </div>
     )
 }
