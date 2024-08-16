@@ -33,6 +33,9 @@ const PdfRenderer = ({url}: PdfRendereProps) => {
     const [curPage, setCurPage] = React.useState<number>(1)
     const [scale, setScale] = React.useState<number>(1)
     const [rotation, setRotation] = React.useState<number>(0)
+    const [renderedScale, setRenderedScale] = React.useState<number | null>(null)
+
+    const isLoading = renderedScale !== scale
 
     const customPageInput = z.object({
         page: z.string().refine((num) => Number(num) > 0 &&  Number(num) <= numPage!)
@@ -134,11 +137,32 @@ const PdfRenderer = ({url}: PdfRendereProps) => {
                 }}
                 file={url}
                 >
-                    <Page 
+                   {isLoading && renderedScale ? 
+                   
+                   <Page 
                     width={width ? width : 1} 
                     pageNumber={curPage} 
                     scale={scale}
-                    rotate={rotation}/>
+                    key={"@" + renderedScale}
+                    rotate={rotation}/> 
+                    
+                    : null}
+
+                    <Page 
+                    className={cn(isLoading ? "hidden" : "")}
+                    width={width ? width : 1} 
+                    pageNumber={curPage} 
+                    scale={scale}
+                    rotate={rotation}
+                    loading={
+                        <div className='flex justify-center'>
+                            <Loader2 className='my-24 h-6 w-6 animate-spin'/>
+                        </div>
+                    }
+                    onRenderSuccess={() => setRenderedScale(scale)}
+                    key={"@" + scale}
+                    /> 
+                    
                 </Document>
                 {/* <iframe src={url} className='h-full w-full flex-1 flex-col'/> */}
                 
