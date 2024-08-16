@@ -15,6 +15,7 @@ import { cn } from '@/lib/utils';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
 import SimpleBar from 'simplebar-react'
 import "simplebar-react/dist/simplebar.min.css"
+import PdfFullScreen from './PdfFullScren';
 
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
@@ -59,7 +60,7 @@ const PdfRenderer = ({url}: PdfRendereProps) => {
         <div className="w-full bg-white rounded-md shadow flex flex-col items-center">
             <div className="h-14 w-full border-b border-zinc-200 flex items-center justify-between px-2">
                 <div className="flex items-center gap-1.5">
-                    <Button disabled={numPage === undefined || curPage === 1} variant="ghost" aria-label='previous page' onClick={() => setCurPage((prev) => prev - 1 > 1 ? prev - 1 : 1)} >
+                    <Button disabled={numPage === undefined || curPage === 1} variant="ghost" aria-label='previous page' onClick={() => {setCurPage((prev) => prev - 1 > 1 ? prev - 1 : 1); setValue("page", String(curPage - 1))}} >
                         <ChevronDown className='h-4 w-4'/>
                     </Button>
                     <div className='flex items-center gap-1.5'>
@@ -75,7 +76,7 @@ const PdfRenderer = ({url}: PdfRendereProps) => {
                         </p>
                     </div>
                     <Button disabled={numPage === undefined || curPage === numPage} variant="ghost" aria-label='next page'>
-                        <ChevronUp className='h-4 w-4' onClick={() => setCurPage((prev) => prev + 1 >= numPage! ? numPage! : prev + 1)}/>
+                        <ChevronUp className='h-4 w-4' onClick={() => {setCurPage((prev) => prev + 1 >= numPage! ? numPage! : prev + 1); setValue("page", String(curPage + 1))}}/>
                     </Button>
                 </div>
                 <div className='space-x-2'>
@@ -108,7 +109,7 @@ const PdfRenderer = ({url}: PdfRendereProps) => {
                     <Button variant="ghost" onClick={() => {setRotation((prev) => prev + 90)}}>
                         <RotateCw className='h-4 w-4'/>
                     </Button>
-                    <PdfFullScreen/>
+                    <PdfFullScreen fileUrl={url}/>
                 </div>
             </div>
 
