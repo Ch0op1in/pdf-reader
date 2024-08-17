@@ -4,19 +4,20 @@ import { useToast } from "../ui/use-toast"
 import { useMutation } from "@tanstack/react-query"
 
 type StreamResponse = {
-    addMessage : () => void,
-    message: string,
-    handleInputChange : (event: React.ChangeEvent<HTMLTextAreaElement>) => void
-    isLoading : boolean
-}
-
-export const ChatContext = createContext<StreamResponse>({
-    addMessage : () => {},
+    addMessage: () => void
+    message: string
+    handleInputChange: (
+      event: React.ChangeEvent<HTMLTextAreaElement>
+    ) => void
+    isLoading: boolean
+  }
+  
+  export const ChatContext = createContext<StreamResponse>({
+    addMessage: () => {},
     message: '',
-    handleInputChange : () => {},
-    isLoading : false
-
-})
+    handleInputChange: () => {},
+    isLoading: false,
+  })
 
 interface ChatContextProvider {
     fileId: string,
@@ -31,7 +32,7 @@ export const ChatContextProvider = ({fileId, children}: ChatContextProvider) => 
 
     const { mutate: sendMessage } = useMutation({
         mutationFn: async ({message} : {message: string}) => {
-            const response = await fetch("/api/message", {
+            const response = await fetch("/api/testapi", {
                 method: "POST",
                 body: JSON.stringify({fileId, message})
             })
@@ -60,7 +61,7 @@ export const ChatContextProvider = ({fileId, children}: ChatContextProvider) => 
             handleInputChange, 
             isLoading
         }}>
-
+            {children}
         </ChatContext.Provider>
     )
 
