@@ -1,8 +1,10 @@
+import { trpc } from "@/app/_trpc/client"
 
 
 const Message = () => {
-    return (
 
+    const {} = trpc
+    return (
         <div>
             
         </div>
