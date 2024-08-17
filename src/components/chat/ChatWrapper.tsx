@@ -46,6 +46,7 @@ const ChatWrapper = ({ fileId } : ChatWrapperProps) => {
                         <p className="text-zinc-500 text-sm">We're preparing your PDF.</p>
                     </div>
                 </div>
+                <ChatInput isDisabled />
             </div>
         )
     }
@@ -60,6 +61,7 @@ const ChatWrapper = ({ fileId } : ChatWrapperProps) => {
                         <p className="text-zinc-500 text-sm">AI is reading your pdf. (Takes few seconds)</p>
                     </div>
                 </div>
+                <ChatInput isDisabled />
             </div>
         )
     }
@@ -79,6 +81,7 @@ const ChatWrapper = ({ fileId } : ChatWrapperProps) => {
                         </Link>
                     </div>
                 </div>
+                <ChatInput isDisabled />
             </div>
         )
     }
@@ -89,7 +92,7 @@ const ChatWrapper = ({ fileId } : ChatWrapperProps) => {
                 <Message/>
             </div>
 
-            <ChatInput isDisabled/>
+            <ChatInput />
         </div>
     )
 }
