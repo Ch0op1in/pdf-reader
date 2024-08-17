@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils"
 import { ExtendedMessage } from "@/types/message"
 import { Icons } from "../Icons"
+import ReactMarkdown from 'react-markdown'
 
 interface MessageProps{
     message: ExtendedMessage
@@ -21,6 +22,22 @@ const Message = ({message, isNextMessageSamePerson}: MessageProps) => {
                 ) : (
                     <Icons.logo className="fill-zinc-300 h-3/4 w-3/4"/>
                 )}
+            </div>
+            <div className={cn("flex flex-col space-y-2 text-base max-w-md mx-2", {
+                "order-1 items-end" : message.isUserMessage,
+                "order-2 items-start" : !message.isUserMessage,
+            })} >
+                <div className={cn("px-4 py-2 rounded-lg inline-block", {
+                    "bg-blue-500 text-white": message.isUserMessage,
+                    "bg-zinc-100 text-black": !message.isUserMessage,
+                    "rounded-br-none": !isNextMessageSamePerson && message.isUserMessage,
+                    "rounded-bl-none": !isNextMessageSamePerson && !message.isUserMessage,
+                })} >
+                    <div>
+
+                    </div>
+                </div>
+
             </div>
         </div>
     )
