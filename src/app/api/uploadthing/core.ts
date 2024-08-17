@@ -1,10 +1,14 @@
 import { db } from "@/db";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { uploadStatus } from "@prisma/client";
-import { NextRequest } from "next/server";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
- 
+import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
+import { Pinecone } from "@pinecone-database/pinecone";
+import { OpenAIEmbeddings } from "@langchain/openai";
+import { PineconeStore } from "@langchain/pinecone";
+
+
 const f = createUploadthing();
  
 const auth = (req: Request) => ({ id: "fakeId" }); // Fake auth function
@@ -35,6 +39,29 @@ export const ourFileRouter = {
           uploadStatus: "PROCESSING"
         }
       })
+
+      try {
+        const response = await fetch(createdFile.url)
+        const blob = await response.blob()
+        const loader = new PDFLoader(blob)
+        const pageLevelDocs = await loader.load()
+        const pagesAmt = pageLevelDocs.length
+
+        // Vectorize the docu
+
+        const pinecone = new Pinecone
+
+        const pineconeIndex = pinecone.Index("reeead")
+
+        const embeddings = new OpenAIEmbeddings({
+          apiKey: process.env.OPENAI_API_KEY, 
+        })
+
+        await PineconeStore 
+
+      } catch (error) {
+        
+      }
 
       }),
 } satisfies FileRouter;
