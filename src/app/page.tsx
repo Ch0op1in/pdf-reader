@@ -75,7 +75,7 @@ export default function Home() {
                 <div className="flex flex-col space-y-2 border-l-4 border-zinc-300 py-2 pl-4 md:border-l-0 md:border-t-2 md:pb-0 md:pl-0 md:pt-4">
                   <span className="text-small font-medium text-blue-600 ">Step 2</span>
                   <span className="text-xl font-semibold">Upload your PDF</span>
-                  <span className="mt-2 text-zinc-700">In seconds we'll process your PDF to be ready to go</span>
+                  <span className="mt-2 text-zinc-700">In seconds we&apos;ll process your PDF to be ready to go</span>
                 </div>
               </li>
               <li className="md:flex-1">
