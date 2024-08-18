@@ -21,13 +21,17 @@ export default function RootLayout({
 }>) {
   return (
     
-    <html lang="en" className="light">
+    <html lang='en' className='light'>
       <Providers>
-      <body className={cn("min-h-screen font-sans antialiased grainy", inter.className)}>
-        <Toaster/>
-        <Navbar/>
-        {children}
-      </body>
+        <body
+          className={cn(
+            'min-h-screen font-sans antialiased grainy',
+            inter.className
+          )}>
+          <Toaster />
+          <Navbar />
+          {children}
+        </body>
       </Providers>
     </html>
   );
