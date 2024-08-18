@@ -1,4 +1,4 @@
-const Plan = [
+export const Plan = [
     {
         name: "Free",
         slug:"free",
