@@ -23,7 +23,7 @@ const Messages = ({ fileId }: MessagesProps) => {
       },
       {
         getNextPageParam: (lastPage) =>
-          lastPage?.nextCursor,
+          lastPage?.nextCursor
       }
     )
 
