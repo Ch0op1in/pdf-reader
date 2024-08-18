@@ -8,12 +8,13 @@ import { buttonVariants } from "../ui/button"
 import { ChatContextProvider } from "./ChatContext"
 import Messages from "./Messages"
 
-interface ChatWrapperProps{
+interface ChatWrapperProps {
     fileId: string
-}
+    isSubscribed: boolean
+  }
 
 
-const ChatWrapper = ({ fileId } : ChatWrapperProps) => {
+const ChatWrapper = ({ fileId, isSubscribed } : ChatWrapperProps) => {
 
     const { data, isLoading, refetch } = trpc.getFileUploadStatus.useQuery({ fileId });
     const [refetchInterval, setRefetchInterval] = React.useState<number | false>(500);
